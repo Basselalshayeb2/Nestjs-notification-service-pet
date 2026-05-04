@@ -1,4 +1,5 @@
 export * from './eventTypes';
-export * from './rabbitExchages';
+export * from './rabbitExchanges';
 export * from './rabbitQueues';
 export * from './rabbitRoutingKeys';
+export * from './status';

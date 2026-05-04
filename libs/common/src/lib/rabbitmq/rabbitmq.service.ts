@@ -10,7 +10,7 @@ import {
 export class RabbitMqService implements OnModuleDestroy {
   private readonly logger = new Logger(RabbitMqService.name);
 
-  private connection: amqp.Connection;
+  private connection: amqp.ChannelModel;
   private channel: amqp.Channel;
   private confirmChannel: amqp.ConfirmChannel;
 
