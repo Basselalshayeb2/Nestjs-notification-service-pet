@@ -1,0 +1,55 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  producer-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        APP_NAME: producer-service
+    container_name: producer-service
+    ports:
+      - "3000:3000"
+    environment:
+      PRODUCER_PORT: 3000
+      RABBITMQ_URL: amqp://rabbitmq:5672
+    depends_on:
+      - rabbitmq
+    restart: unless-stopped
+
+  consumer-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        APP_NAME: consumer-service
+    container_name: consumer-service
+    ports:
+      - "3001:3001"
+    environment:
+      CONSUMER_PORT: 3001
+      RABBITMQ_URL: amqp://rabbitmq:5672
+      TELEGRAM_SERVICE_URL: http://telegram-service:3002
+    depends_on:
+      - rabbitmq
+      - telegram-service
+    restart: unless-stopped
+
+  telegram-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        APP_NAME: telegram-service
+    container_name: telegram-service
+    ports:
+      - "3002:3002"
+    environment:
+      TELEGRAM_PORT: 3002
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+    restart: unless-stopped
